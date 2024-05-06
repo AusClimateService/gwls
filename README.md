@@ -1,4 +1,4 @@
-This code has been written to assist with construction Global Warming Level timeslices.
+This code has been written to assist with constructing Global Warming Level timeslices.
 
 Refer to the Jupyter notebook for a worked example.
 
