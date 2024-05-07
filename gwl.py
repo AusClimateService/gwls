@@ -4,7 +4,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import yaml
-import urllib
+import urllib.request
 
 def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     """Returns the start and end year of the Global Warming Level timeslice for the specified GWL, GCM, ensemble and pathway.
