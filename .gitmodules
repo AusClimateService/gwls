@@ -1,0 +1,3 @@
+[submodule "cmip_warming_levels"]
+	path = cmip_warming_levels
+	url = git@github.com:mathause/cmip_warming_levels.git
