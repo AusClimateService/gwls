@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import yaml
 import urllib.request
+import os
 
 def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     """Returns the start and end year of the Global Warming Level timeslice for the specified GWL, GCM, ensemble and pathway.
@@ -36,9 +37,12 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     assert pathway.lower() in ['rcp26','rcp45','rcp85','ssp126','ssp245','ssp370','ssp585']
     assert float(GWL) in [1.0,1.2,1.5,2.0,3.0,4.0]
     
-    fpath = f"https://raw.githubusercontent.com/mathause/cmip_warming_levels/main/warming_levels/{CMIP.lower()}_all_ens/{CMIP.lower()}_warming_levels_all_ens_1850_1900.yml"
+    repodir = __file__.rsplit('/', 1)[0]
+    fpath = f"{repodir}/cmip_warming_levels/main/warming_levels/{CMIP.lower()}_all_ens/{CMIP.lower()}_warming_levels_all_ens_1850_1900.yml"
+    if not os.path.exists(fpath):
+        raise ValueError('You have not properly cloned the gwl repository! Go back and use the command \033[1m `git submodule update --recursive --remote` \033[0m')   
 
-    with urllib.request.urlopen(fpath) as f:
+    with open(fpath) as f:
         tidied =  (
             f.read().decode('utf-8')
                 .replace("# {","- {")
