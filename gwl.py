@@ -38,7 +38,7 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     assert float(GWL) in [1.0,1.2,1.5,2.0,3.0,4.0]
     
     repodir = __file__.rsplit('/', 1)[0]
-    fpath = f"{repodir}/cmip_warming_levels/main/warming_levels/{CMIP.lower()}_all_ens/{CMIP.lower()}_warming_levels_all_ens_1850_1900.yml"
+    fpath = f"{repodir}/cmip_warming_levels/warming_levels/{CMIP.lower()}_all_ens/{CMIP.lower()}_warming_levels_all_ens_1850_1900.yml"
     if not os.path.exists(fpath):
         raise ValueError('You have not properly cloned the gwl repository! Go back and use the command \033[1m `git submodule update --init` \033[0m')   
 
