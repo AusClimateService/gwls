@@ -44,7 +44,7 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
 
     with open(fpath) as f:
         tidied =  (
-            f.read().decode('utf-8')
+            f.read()
                 .replace("# {","- {")
                 .replace("} -- did not reach 1.0°C",", start_year: 9999, end_year: 9999}")
                 .replace("} -- did not reach 1.2°C",", start_year: 9999, end_year: 9999}")
