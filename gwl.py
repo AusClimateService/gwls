@@ -37,6 +37,36 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     assert pathway.lower() in ['rcp26','rcp45','rcp85','ssp126','ssp245','ssp370','ssp585']
     assert float(GWL) in [1.0,1.2,1.5,2.0,3.0,4.0]
     
+    df = get_GWL_lookup_table(CMIP)
+
+    assert GCM in df['model'].unique(), f"Model {model} not recognised. GWLs available for the following models: {df['model'].unique()}"
+        
+    df = df[ (df.model == GCM) & (df.ensemble == ensemble) & (df.exp == pathway) ]
+    if df.empty:
+        raise ValueError(f'GWL {GWL} not calculated for {CMIP,GCM,ensemble,pathway}')
+    elif df.shape[0] > 1:
+        raise ValueError(f'Multiple entries for {CMIP,GCM,ensemble,pathway} GWL {GWL}\N{DEGREE SIGN}C. Check source file.')
+    elif df.end_year.values.flatten() == 9999:
+        raise ValueError(f'{CMIP,GCM,ensemble,pathway} did not reach GWL {GWL}\N{DEGREE SIGN}C.')
+    else:
+        return df[['start_year','end_year']].values.flatten()
+
+def get_GWL_lookup_table(CMIP):
+    """Reads the yaml file from Matthias's repo and returns as a pandas dataframe
+
+    Author: Mitchell Black (mitchell.black@bom.gov.au)
+
+    Parameters
+    ----------
+    CMIP : str
+        Version of CMIP [options: 'CMIP5', 'CMIP6']
+
+    Returns
+    -------
+    df : DataFrame
+       Pandas DataFrame version of yaml look-up file
+    """
+    
     repodir = __file__.rsplit('/', 1)[0]
     fpath = f"{repodir}/cmip_warming_levels/warming_levels/{CMIP.lower()}_all_ens/{CMIP.lower()}_warming_levels_all_ens_1850_1900.yml"
     if not os.path.exists(fpath):
@@ -56,18 +86,8 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     
         df = pd.json_normalize(yaml.safe_load(tidied),record_path=f'warming_level_{int(float(GWL)*10)}')
 
-        assert GCM in df['model'].unique(), f"Model {model} not recognised. GWLs available for the following models: {df['model'].unique()}"
-        
-        df = df[ (df.model == GCM) & (df.ensemble == ensemble) & (df.exp == pathway) ]
-        if df.empty:
-            raise ValueError(f'GWL {GWL} not calculated for {CMIP,GCM,ensemble,pathway}')
-        elif df.shape[0] > 1:
-            raise ValueError(f'Multiple entries for {CMIP,GCM,ensemble,pathway} GWL {GWL}\N{DEGREE SIGN}C. Check source file.')
-        elif df.end_year.values.flatten() == 9999:
-            raise ValueError(f'{CMIP,GCM,ensemble,pathway} did not reach GWL {GWL}\N{DEGREE SIGN}C.')
-        else:
-            return df[['start_year','end_year']].values.flatten()
-
+        return df
+ 
 def get_GWL_timeslice(ds,CMIP,GCM,ensemble,pathway,GWL):
     """Returns the 20-year timeslice of a data array corresponding to the desired Global Warming Level.
 
