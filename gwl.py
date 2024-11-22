@@ -37,7 +37,9 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     assert pathway.lower() in ['rcp26','rcp45','rcp85','ssp126','ssp245','ssp370','ssp585']
     assert float(GWL) in [1.0,1.2,1.5,2.0,3.0,4.0]
     
-    df = get_GWL_lookup_table(CMIP)
+    yaml = get_GWL_lookup_table(CMIP)
+
+    df = pd.json_normalize(yaml,record_path=f'warming_level_{int(float(GWL)*10)}')
 
     assert GCM in df['model'].unique(), f"Model {model} not recognised. GWLs available for the following models: {df['model'].unique()}"
         
@@ -63,8 +65,8 @@ def get_GWL_lookup_table(CMIP):
 
     Returns
     -------
-    df : DataFrame
-       Pandas DataFrame version of yaml look-up file
+    yaml : dict
+        yaml file opened in safe mode (effectively a dictionary of dictinaries)
     """
     
     repodir = __file__.rsplit('/', 1)[0]
@@ -84,10 +86,8 @@ def get_GWL_lookup_table(CMIP):
                 .replace("} -- did not reach 4.0°C",", start_year: 9999, end_year: 9999}")
         )
     
-        df = pd.json_normalize(yaml.safe_load(tidied),record_path=f'warming_level_{int(float(GWL)*10)}')
-
-        return df
- 
+        return yaml.safe_load(tidied)
+        
 def get_GWL_timeslice(ds,CMIP,GCM,ensemble,pathway,GWL):
     """Returns the 20-year timeslice of a data array corresponding to the desired Global Warming Level.
 
