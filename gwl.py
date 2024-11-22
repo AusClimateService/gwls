@@ -88,7 +88,7 @@ def read_GWL_yaml_file(CMIP)
     
         return yaml.safe_load(tidied)
 
-def get_GWL_lookup_table(CMIP)
+def get_GWL_lookup_table(CMIP):
     """Reads the yaml file from Matthias's repo and returns as a pandas dataframe
 
     Author: Mitchell Black (mitchell.black@bom.gov.au)
