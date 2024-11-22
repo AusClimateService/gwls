@@ -104,11 +104,12 @@ def get_GWL_lookup_table(CMIP):
         yaml file opened in safe mode (effectively a dictionary of dictinaries)
     """
 
-    yml = read_GWL_yaml_file('CMIP6')
+    yml = read_GWL_yaml_file(CMIP)
     appended_df = []
     for gwl in yml.keys():
         df = pd.DataFrame(yml[gwl])
         df.insert(1,'GWL',gwl)
+        df.insert(1,'CMIP',CMIP)
         appended_df.append(df)
         del(df)
     
