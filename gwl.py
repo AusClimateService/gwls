@@ -53,7 +53,7 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     else:
         return df[['start_year','end_year']].values.flatten()
 
-def read_GWL_yaml_file(CMIP)
+def read_GWL_yaml_file(CMIP):
     """Reads the yaml file from Matthias's repo
 
     Author: Mitchell Black (mitchell.black@bom.gov.au)
