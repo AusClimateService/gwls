@@ -37,7 +37,7 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     assert pathway.lower() in ['rcp26','rcp45','rcp85','ssp126','ssp245','ssp370','ssp585']
     assert float(GWL) in [1.0,1.2,1.5,2.0,3.0,4.0]
     
-    yaml = get_GWL_lookup_table(CMIP)
+    yaml = read_GWL_yaml_file(CMIP)
 
     df = pd.json_normalize(yaml,record_path=f'warming_level_{int(float(GWL)*10)}')
 
@@ -53,8 +53,8 @@ def get_GWL_syear_eyear(CMIP,GCM,ensemble,pathway,GWL):
     else:
         return df[['start_year','end_year']].values.flatten()
 
-def get_GWL_lookup_table(CMIP):
-    """Reads the yaml file from Matthias's repo and returns as a pandas dataframe
+def read_GWL_yaml_file(CMIP)
+    """Reads the yaml file from Matthias's repo
 
     Author: Mitchell Black (mitchell.black@bom.gov.au)
 
@@ -87,7 +87,36 @@ def get_GWL_lookup_table(CMIP):
         )
     
         return yaml.safe_load(tidied)
-        
+
+def get_GWL_lookup_table(CMIP)
+    """Reads the yaml file from Matthias's repo and returns as a pandas dataframe
+
+    Author: Mitchell Black (mitchell.black@bom.gov.au)
+
+    Parameters
+    ----------
+    CMIP : str
+        Version of CMIP [options: 'CMIP5', 'CMIP6']
+
+    Returns
+    -------
+    yaml : dict
+        yaml file opened in safe mode (effectively a dictionary of dictinaries)
+    """
+
+    yml = utils.gwl.get_GWL_lookup_table('CMIP6')
+    appended_df = []
+    for gwl in yml.keys():
+        df = pd.DataFrame(yml[gwl])
+        df.insert(1,'GWL',gwl)
+        appended_df.append(df)
+        del(df)
+    
+    df = pd.concat(appended_df,axis=0,ignore_index=True)
+    df['GWL'] = df['GWL'].str.replace('warming_level_','gwl')
+    
+    return df
+
 def get_GWL_timeslice(ds,CMIP,GCM,ensemble,pathway,GWL):
     """Returns the 20-year timeslice of a data array corresponding to the desired Global Warming Level.
 
